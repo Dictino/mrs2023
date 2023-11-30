@@ -83,10 +83,16 @@ end
 set_point=[0.0, 0.0] # x, y
 
 # ╔═╡ be7d937c-2a46-49fe-bc66-49c650f7efb0
-X0=[-20.0*0,20.0*0,0.0,0.0,0.0,0.0,0.0]
+X0=[-20.0,20.0,0.0,0.0,0.0,0.0,0.0]
+
+# ╔═╡ 76cf58a2-877a-4d64-8148-2d22c1441eaa
+x_r,y_r=set_point
 
 # ╔═╡ 8d051922-a2ad-4534-ae41-727642b2a850
 #=interesting values/controllers to try
+    a_s=0.0 #BROKEN MOTOR
+	ψ_r=atan(y_r-y,x_r-x)
+	a_p=a_0+Δa*sign(sin(ψ-ψ_r+Δψ))
 
     a_s=0.0; #BROKEN MOTOR
 1)
@@ -129,9 +135,6 @@ X0=[-20.0*0,20.0*0,0.0,0.0,0.0,0.0,0.0]
 =#
 md"Things to show"
 
-# ╔═╡ bafae6ea-8a40-4009-8b62-c06f8db45ad4
-@bind time_slider Slider(0:0.001:1)
-
 # ╔═╡ 768bb74c-76ee-4aa9-ae46-b3459dd1a0ae
 	@bind a_0 Slider(0:0.1:100)
 
@@ -142,19 +145,19 @@ md"Things to show"
 @bind Δψ Slider(-pi:0.01:pi)
 
 # ╔═╡ 1ece5497-5b5c-44e7-b1cf-fd51d131507a
-function control(x,y,yaw,u,v,r);
-    a_s=0.0; #BROKEN MOTOR
-     #final control
-	x_r=set_point[1]
-	y_r=set_point[2]
-
+function control(x,y,ψ,u,v,r);
+    a_s=0.0 #BROKEN MOTOR
 	ψ_r=atan(y_r-y,x_r-x)
-	a_p=a_0+Δa*sign(sin(yaw-ψ_r+Δψ))
+	a_p=a_0+Δa*sign(sin(ψ-ψ_r+Δψ))
+		    
     return (a_s,a_p)
 end
 
 # ╔═╡ 297cc4ed-a6f9-493b-9837-1d625c5e8734
 md" $a_0$ = $(a_0), $$\Delta a$$ = $(Δa), $$\Delta \psi$$ = $(Δψ*180/pi)"
+
+# ╔═╡ bafae6ea-8a40-4009-8b62-c06f8db45ad4
+@bind time_slider Slider(0:0.001:1)
 
 # ╔═╡ b212918a-0325-4691-b464-22ab12aa30cb
 @bind vy_current Slider(0:0.001:0.1)
@@ -203,7 +206,7 @@ end
 
 # ╔═╡ e11b958e-fb9b-4811-9922-089c3e7aacae
 begin
-	Tf=600.0;
+	Tf=6000.0;
 	dt=0.1;
 	x,y,yaw,u,v,r,t,a_s,a_p=simulator(X0,Tf,dt)
 end
@@ -1325,6 +1328,7 @@ version = "1.4.1+0"
 # ╠═ae3961d4-be42-4268-b60f-653fe5842adc
 # ╠═be7d937c-2a46-49fe-bc66-49c650f7efb0
 # ╠═e11b958e-fb9b-4811-9922-089c3e7aacae
+# ╠═76cf58a2-877a-4d64-8148-2d22c1441eaa
 # ╠═1ece5497-5b5c-44e7-b1cf-fd51d131507a
 # ╟─8d051922-a2ad-4534-ae41-727642b2a850
 # ╟─297cc4ed-a6f9-493b-9837-1d625c5e8734
